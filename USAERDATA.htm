@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>USERDATA - accounts</title>
+</head>
+<body>
+<!--
+  사용자 목록 편집:
+  각 아이템은 { "id": "...", "pw": "...", "role": "admin" 또는 "user" }
+  예: { "id":"admin", "pw":"adm!nPass", "role":"admin" }
+-->
+
+<!-- 관리G -->
+
+<!-- JSON 블록 (fetch로 읽을 때 사용) -->
+<script id="userdata" type="application/json">
+
+[
+  
+{"id":"admin","pw":"1q2w3e4r!","role":"admin", "profile" : "어드민"},    
+{"id":"bmlee","pw":"bmlee123","role":"user", "profile" : "관리G 이보미"}, 
+{"id":"user","pw":"user123","role":"user", "profile" : "법무팀 홍길동"} 
+
+
+]
+
+
+
+
+
+
+
+
+</script>
+
+<!-- 스크립트 변수 (script 태그로 직접 로드하는 방식에 대비) -->
+<script>
+/* 로그인 파일에서 USERDATA.htm 을 <script src="USERDATA.htm"></script> 처럼 로드해도
+   window.USERDATA 변수가 생기도록 합니다. (대부분 파일 서버/브라우저 환경에서 동작) */
+try{
+  window.USERDATA = JSON.parse(document.getElementById('userdata').textContent);
+}catch(e){
+  // 만약 document 접근이 불가능하면 빈 배열로 초기화
+  window.USERDATA = window.USERDATA || [];
+}
+</script>
+
+<!-- 이 페이지 자체는 열어봐도 별도 UI 없음 -->
+</body>
+</html>

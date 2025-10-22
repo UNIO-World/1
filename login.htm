@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로그인</title>
+
+<!-- USERDATA.js를 먼저 로드 -->
+<script src="USERDATA.js"></script>
+
+
+<!-- 백그라운드 BGP코드  원본 : #f4f6f8    #f3ffe7--> 
+
+<!-- ㅇㅇ  -->
+
+
+
+<style>
+/* ...원래 스타일 유지... */
+body{font-family:Arial,Helvetica,sans-serif;background:#f3ffe7 ;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+.card{background:#fff;padding:22px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.08);width:360px}
+input{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid #ddd;box-sizing:border-box}
+button{width:100%;padding:10px;margin-top:12px;border-radius:8px;border:0;background:#111;color:#fff;cursor:pointer}
+.hint{font-size:13px;color:#666;margin-top:8px}
+</style>
+</head>
+<body>
+
+
+
+<table>
+  <tr>
+    <td>
+      <div>
+        <img src="images/Login_Page/왼쪽상단.png"></p>
+      </div>        
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div class="card">
+        <h2>로그인</h2>
+        <input id="userid" placeholder="ID (예: admin)" autocomplete="username">
+        <input id="userpw" type="password" placeholder="PW" autocomplete="current-password">
+        <button id="btnLogin">로그인</button>
+        <!-- <div class="hint">계정은 USERDATA.js 파일에서 관리합니다.</div> -->
+      </div>
+      
+      <script>
+      function showAlert(msg){ alert(msg); }
+      
+      document.getElementById('btnLogin').addEventListener('click', ()=>{
+        const id = document.getElementById('userid').value.trim();
+        const pw = document.getElementById('userpw').value;
+        if(!id || !pw){ showAlert('ID와 PW를 입력하세요.'); return; }
+      
+        // window.USERDATA는 USERDATA.js에서 선언되어 있어야 합니다.
+        const users = Array.isArray(window.USERDATA) ? window.USERDATA : [];
+        const found = users.find(u => u.id === id && u.pw === pw);
+        if(!found){
+          showAlert('아이디 또는 비밀번호가 잘못되었습니다.');
+          return;
+        }
+      
+        sessionStorage.setItem('auth_user', found.id);
+        sessionStorage.setItem('auth_role', found.role || 'user');
+        location.href = 'main.htm';
+      });
+      
+      // 엔터키 제출
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') document.getElementById('btnLogin').click(); });
+      </script>
+      
+
+
+    </td>
+  </tr>
+
+</table>
+
+
+
+
+
+</body>
+</html>

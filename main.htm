@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Main</title>
+<style>
+  body{font-family:sans-serif;background:#f9fafb;margin:0;padding:20px;}
+  .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);max-width:800px;margin:20px auto;}
+  h2{margin-top:0;}
+  textarea{width:100%;min-height:150px;border:1px solid #ccc;border-radius:8px;padding:10px;font-family:monospace;}
+  .notice{white-space:pre-wrap;background:#f6f6ff;border:1px solid #ddd;border-radius:8px;padding:12px;min-height:100px;}
+  button{padding:8px 14px;border:0;border-radius:6px;background:#111;color:#fff;cursor:pointer;}
+  .btn-muted{background:#666;}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h2 id="welcome"></h2>
+    <div id="noticeSection">
+      <h3>공지</h3>
+      <div id="noticeView" class="notice">(공지 없음)</div>
+    </div>
+    <div id="adminSection" style="display:none;margin-top:20px;">
+      <h3>공지 작성 / 수정 (관리자)</h3>
+      <textarea id="editor"></textarea>
+      <div style="margin-top:8px;">
+        <button id="btnSave">저장</button>
+        <button id="btnLogout" class="btn-muted">로그아웃</button>
+      </div>
+    </div>
+    <div id="userSection" style="margin-top:20px;">
+      <button id="btnLogout" class="btn-muted">로그아웃</button>
+    </div>
+  </div>
+
+<script>
+function getSession(){
+  return {
+    user: sessionStorage.getItem("auth_user"),
+    role: sessionStorage.getItem("auth_role")
+  };
+}
+
+function clearSession(){
+  sessionStorage.clear();
+  location.href="login.htm";
+}
+
+const s = getSession();
+if(!s.user){ location.href="login.htm"; }
+
+document.getElementById("welcome").textContent = `${s.user} 님 환영합니다. (권한: ${s.role})`;
+
+// 공지 불러오기
+function loadNotice(){
+  const saved = localStorage.getItem("notice_text") || "";
+  document.getElementById("noticeView").textContent = saved || "(공지 없음)";
+  if(s.role==="admin") document.getElementById("editor").value = saved;
+}
+loadNotice();
+
+// 관리자만 편집 가능
+if(s.role==="admin"){
+  document.getElementById("adminSection").style.display="block";
+  document.getElementById("btnSave").addEventListener("click", ()=>{
+    const txt = document.getElementById("editor").value;
+    localStorage.setItem("notice_text", txt);
+    loadNotice();
+    alert("공지 저장 완료");
+  });
+}else{
+  document.getElementById("userSection").style.display="block";
+}
+
+// 로그아웃 버튼
+document.querySelectorAll("#btnLogout").forEach(btn=>{
+  btn.addEventListener("click", clearSession);
+});
+</script>
+
+<script>
+  function loadNotice() {
+      fetch("notice.php")
+          .then(res => res.text())
+          .then(text => {
+              document.getElementById("noticeArea").innerText = text;
+          });
+  }
+  
+  function saveNotice() {
+      const content = document.getElementById("noticeInput").value;
+      fetch("notice.php", {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: "content=" + encodeURIComponent(content)
+      })
+      .then(res => res.text())
+      .then(alert);
+  }
+  </script>
+  </head>
+  <body onload="loadNotice()">
+  
+  <h2>공지사항</h2>
+  <div id="noticeArea" style="border:1px solid #000; padding:10px; min-height:80px;">
+  </div>
+  
+  <!-- 관리자만 보이도록 조건 처리 필요 -->
+  <div id="adminBox" style="margin-top:10px;">
+      <textarea id="noticeInput" rows="4" cols="40"></textarea><br>
+      <button onclick="saveNotice()">저장</button>
+  </div>
+
+
+
+
+</body>
+</html>
